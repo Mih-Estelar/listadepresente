@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listinha da Mih</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* BORDA GIF DO SITE TODO */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            border: 25px solid transparent;
+            border-image: url('https://enchantments.carrd.co/assets/images/gallery08/78b95863.gif?v=5c8435d5') 40 round;
+            z-index: 9999;
+            pointer-events: none;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: #000000; 
+            min-height: 100vh; 
+            padding: 40px 20px 20px;
+            color: #f5f5f5;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .floating-gif {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 70px;
+            height: 70px;
+            z-index: 10000;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .floating-gif-2 {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            width: 70px;
+            height: 70px;
+            z-index: 10000;
+            animation: float-reverse 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes float-reverse {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 10; }
+        
+        h1 { 
+            text-align: center; 
+            color: #e0b3ff; 
+            margin-bottom: 10px; 
+            font-size: 2.2em; 
+            text-shadow: 0 0 10px rgba(148, 0, 211, 0.8);
+            font-weight: bold;
+        }
+        
+        .subtitle { 
+            text-align: center; 
+            color: #b39ddb; 
+            margin-bottom: 30px; 
+        }
+        
+        .tabs { 
+            display: flex; 
+            background: rgba(20,20,20,0.9); 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8); 
+            margin-bottom: 20px; 
+            border: 1px solid #6a1b9a;
+        }
+        
+        .tab-btn { 
+            flex: 1; 
+            padding: 18px; 
+            background: none; 
+            border: none; 
+            font-size: 1.2em; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            color: #f5f5f5;
+        }
+        .tab-btn:hover { background: rgba(106, 27, 154, 0.3); }
+        .tab-btn.active { 
+            background: #6a1b9a; 
+            color: white; 
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+        }
+        
+        .tab-content { 
+            display: none; 
+            background: #111111; 
+            padding: 35px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9); 
+            border: 1px solid #4a148c;
+        }
+        .tab-content.active { display: block; }
+        
+        .bio { text-align: center; line-height: 1.7; color: #f5f5f5; }
+        .dates { 
+            background: #1a1a1a; 
+            padding: 25px; 
+            border-radius: 15px; 
+            margin-top: 25px; 
+            text-align: center; 
+            border: 1px solid #6a1b9a;
+        }
+        .date { 
+            display: inline-block; 
+            margin: 0 15px; 
+            font-weight: bold; 
+            color: #ba68c8; 
+            font-size: 1.1em;
+        }
+        
+        .products-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+        .card { 
+            background: #121212; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9); 
+            transition: all 0.4s; 
+            cursor: pointer; 
+            border: 1px solid #4a148c;
+        }
+        .card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 20px 50px rgba(0,0,0,1);
+            border-color: #8e24aa;
+        }
+        .card img { 
+            width: 100%; 
+            height: 220px; 
+            object-fit: cover; 
+            filter: brightness(0.85);
+            display: block;
+        }
+        .card-info { padding: 20px; text-align: center; }
+        .card h3 { color: #f5f5f5; margin-bottom: 8px; font-size: 1.3em; }
+        .card p { color: #ba68c8; font-size: 1.4em; font-weight: bold; }
+        
+        .btn-escolher { 
+            background: #6a1b9a; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-size: 1.1em; 
+            width: 100%; 
+            margin-top: 12px; 
+            transition: all 0.3s; 
+            font-weight: bold;
+        }
+        .btn-escolher:hover { 
+            background: #8e24aa; 
+            transform: translateY(-2px); 
+        }
+        
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.9); 
+            z-index: 10001;
+        }
+        .modal-content { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: #111111; 
+            padding: 40px; 
+            border-radius: 20px; 
+            text-align: center; 
+            max-width: 450px; 
+            width: 90%; 
+            border: 1px solid #6a1b9a;
+            box-shadow: 0 20px 60px rgba(0,0,0,1);
+        }
+        
+        .pix { 
+            background: #003300; 
+            padding: 20px; 
+            border-radius: 15px; 
+            font-size: 1.4em; 
+            font-weight: bold; 
+            color: #b9f6ca; 
+            margin: 25px 0; 
+            word-break: break-all; 
+            border: 1px solid #2e7d32;
+        }
+        .btn-copy { 
+            background: #283593; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 1em; 
+            margin-top: 15px; 
+            transition: all 0.3s; 
+            display: block; 
+            width: 100%; 
+            font-weight: bold;
+        }
+        .btn-copy:hover { background: #3949ab; transform: translateY(-2px); }
+        .btn-copy.copied { background: #2e7d32 !important; }
+        .copy-feedback { color: #66bb6a; font-weight: bold; margin-top: 8px; font-size: 1em; }
+        .btn-sim, .btn-nao { 
+            padding: 12px 28px; 
+            margin: 12px; 
+            border: none; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-size: 1.1em; 
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-sim { background: #2e7d32; color: white; }
+        .btn-nao { background: #c62828; color: white; }
+        .btn-sim:hover, .btn-nao:hover { transform: translateY(-2px); }
+        
+        @media (max-width: 768px) { 
+            body { padding: 35px 15px 15px; }
+            .tabs { flex-direction: column; } 
+            h1 { font-size: 1.8em; } 
+            .floating-gif, .floating-gif-2 { 
+                width: 55px; 
+                height: 55px; 
+                bottom: 10px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- GIFs DECORATIVOS -->
+    <img src="https://enchantments.carrd.co/assets/images/gallery13/546bdc67_original.gif?v=5c8435d5" 
+         alt="Decoração" class="floating-gif">
+    <img src="https://biscuit.crd.co/assets/images/gallery100/80917c95.gif?v=cc1c6dfa" 
+         alt="Decoração 2" class="floating-gif-2">
+
+    <div class="container">
+        <h1>✨ Bem-vindo(a)! Surpreso(a) do que me dar de presente? Veio ao lugar certo! ✨</h1>
+        <p class="subtitle">Escolha algo da minha listinha e me surpreenda! 🌟</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('inicio')">Início</button>
+            <button class="tab-btn" onclick="openTab('lista')">Lista de Presentes</button>
+        </div>
+
+        <div id="inicio" class="tab-content active">
+            <div class="bio">
+                <p>Oi! Sou <strong style="color: #ba68c8;">Mih</strong>, ler manga, vtuber, criadora de conteudo, musica, desenhar.<br>
+                Criei essa listinha pra facilitar sua vida na hora de escolher um presente incrível pra mim.<br>
+                Qualquer coisinha aqui me deixa super feliz! 💜✨</p>
+                <div class="dates">
+                    <div class="date">🎂 Aniversário: 17/07</div>
+                    <div class="date">🎉 Data Comemorativa de Batizado: 12/10</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="lista" class="tab-content">
+            <div class="products-grid">
+                <!-- MANGA BARATO -->
+                <div class="card" onclick="openConfirm('Manga Barato (R$29)')">
+                    <img src="manga barato.jpg" alt="Manga">
+                    <div class="card-info">
+                        <h3>📚 Manga Barato</h3>
+                        <p>R$ 29</p>
+                        <button class="btn-escolher">📖 Escolher</button>
+                    </div>
+                </div>
+
+                <!-- MANGA CARO -->
+                <div class="card" onclick="openConfirm('Manga Premium (R$60)')">
+                    <img src="Manga Premium.jpg" alt="Manga Premium">
+                    <div class="card-info">
+                        <h3>📖 Manga Premium</h3>
+                        <p>R$ 60</p>
+                        <button class="btn-escolher">✨ Escolher</button>
+                    </div>
+                </div>
+
+                <!-- URSINHO DE PELÚCIA -->
+                <div class="card" onclick="openConfirm('Ursinho de Pelúcia (R$45)')">
+                    <img src="Ursinho de Pelúcia.jpg" alt="Ursinho">
+                    <div class="card-info">
+                        <h3>🧸 Ursinho Fofo</h3>
+                        <p>R$ 45</p>
+                        <button class="btn-escolher">💕 Escolher</button>
+                    </div>
+                </div>
+
+                <!-- CARTINHA POKÉMON -->
+                <div class="card" onclick="openConfirm('Cartinha Pokémon (R$12)')">
+                    <img src="Cartinha Pokémon.jpg" alt="Pokémon">
+                    <div class="card-info">
+                        <h3>🎴 Cartinha Pokémon</h3>
+                        <p>R$ 12</p>
+                        <button class="btn-escolher">⚡ Escolher</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #f5f5f5;">Tem certeza que quer dar esse presente?</h2>
+            <div id="pixSection" style="display: none;">
+                <div id="pixInfo" class="pix">PIX: 08350550945</div>
+                <button class="btn-copy" onclick="copyPix()">📋 Copiar PIX</button>
+                <div id="copyFeedback" class="copy-feedback" style="display: none;">PIX copiado! 🎉</div>
+            </div>
+            <button class="btn-sim" onclick="confirmGift()">Sim!</button>
+            <button class="btn-nao" onclick="closeConfirm()">Não</button>
+        </div>
+    </div>
+
+    <script>
+        let currentGift = '';
+
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function openConfirm(giftName) {
+            currentGift = giftName;
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmModal').style.display = 'none';
+            document.getElementById('pixSection').style.display = 'none';
+            resetCopyButton();
+        }
+
+        function confirmGift() {
+            document.getElementById('pixSection').style.display = 'block';
+        }
+
+        function copyPix() {
+            const pix = '08350550945';
+            navigator.clipboard.writeText(pix).then(function() {
+                const btn = document.querySelector('.btn-copy');
+                const feedback = document.getElementById('copyFeedback');
+                btn.textContent = '✅ Copiado!';
+                btn.classList.add('copied');
+                feedback.style.display = 'block';
+                setTimeout(() => { resetCopyButton(); }, 2000);
+            }).catch(function() {
+                alert('Erro ao copiar. Copie manualmente: ' + pix);
+            });
+        }
+
+        function resetCopyButton() {
+            const btn = document.querySelector('.btn-copy');
+            const feedback = document.getElementById('copyFeedback');
+            btn.textContent = '📋 Copiar PIX';
+            btn.classList.remove('copied');
+            feedback.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target == modal) closeConfirm();
+        }
+    </script>
+</body>
+</html>
